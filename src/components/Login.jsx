@@ -1,3 +1,4 @@
+import { set } from 'mongoose';
 import React, { useState } from 'react';
 
 function Login() {
@@ -53,6 +54,8 @@ function Login() {
               onChange={(e) => {
                 const value = e.target.value;
                 setPassword(value);
+
+                if(value.length==0){setPasswordError(''); return;}
 
                 const hasUpperCase = /[A-Z]/.test(value);
                 const hasLowerCase = /[a-z]/.test(value);

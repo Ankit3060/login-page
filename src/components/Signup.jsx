@@ -109,7 +109,10 @@ function Signup() {
               type="password" 
               value={password} 
               onChange={(e) => { 
-                setPassword(e.target.value); 
+                const value = e.target.value;
+                setPassword(value);
+
+                if(value.length==0){setPasswordError(''); return;}
                 
                 const hasUpperCase = /[A-Z]/.test(password);
                 const hasLowerCase = /[a-z]/.test(password);

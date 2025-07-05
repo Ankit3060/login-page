@@ -102,13 +102,13 @@ const Dashboard = () => {
 
         <div className="space-y-3 text-gray-700">
           <InlineField label="Name" value={editedUser.name} editable={editMode} onChange={(val) => handleChange("name", val)} />
-          <InlineField label="Email" value={user.email} />
+          <InlineField label="Email" value={user.email} editable={editMode} />
           <InlineField label="Phone" value={editedUser.phone} editable={editMode} onChange={(val) => handleChange("phone", val)} />
           <InlineField label="Gender" value={editedUser.gender} editable={editMode} type="select" onChange={(val) => handleChange("gender", val)} />
           <InlineField label="Address" value={editedUser.address} editable={editMode} onChange={(val) => handleChange("address", val)} />
           <InlineField label="Date of Birth" value={editedUser.dob} editable={editMode} type="date" onChange={(val) => handleChange("dob", val)} />
           <InlineField label="Qualification" value={editedUser.qualification} editable={editMode} onChange={(val) => handleChange("qualification", val)} />
-          <InlineField label="Member Since" value={new Date(user.joined).toLocaleDateString()} />
+          <InlineField label="Member Since" value={new Date(editedUser.joined).toLocaleDateString()} editable={editMode} />
         </div>
 
 
