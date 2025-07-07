@@ -1,44 +1,77 @@
 import React, { useState } from 'react';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { AuthContext } from '../context/AuthContext';
+import axios from 'axios';
+import { useContext } from 'react';
 
 function Signup() {
+  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  const navigateTo = useNavigate();
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phone, setPhone] = useState('');
   const [gender, setGender] = useState('');
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
+  const validatePassword = (password) => {
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasNumber = /\d/.test(password);
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-    if (!(hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar)) {
+    return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    if (!validatePassword(password)) {
       setPasswordError(<>Password must contain at least one uppercase,<br></br> lowercase, number, and special character.</>);
       return;
     } else {
       setPasswordError('');
     }
 
-    console.log('First Name:', firstName);
-    console.log('Last Name:', lastName);
-    console.log('Email:', email);
-    console.log('Phone Number:', phoneNumber);
-    console.log('Gender:', gender);
-    console.log('Password:', password);
-    alert(`Account created successfully! Welcome ${firstName} ${lastName}`);
-  };
+    try {
+      const res = await axios.post(
+        "http://localhost:4000/api/v1/user/register",
+        {firstName, lastName, email, phone, gender, password},
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      toast.success(res.data.message);
+      setIsAuthenticated(true);
+      navigateTo('/');
+      setFirstName('');
+      setLastName('');
+      setEmail('');
+      setPhone('');
+      setGender('');
+      setPassword('');
+
+    } catch (error) {
+      toast.error(error.response.data.message || "Signup failed");
+    }
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[rgb(214, 228, 239)]">
       <div className='bg-white rounded-2xl shadow-xl p-16 m-8 max-w-2xl mx-auto'>
         <h2 className='text-3xl text-black'>Join AuXiVault!</h2>
         <p className='text-black'>Create your account to get started</p>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSignup}>
 
           <div className='flex gap-4'>
             <div className='flex-1'>
@@ -81,8 +114,8 @@ function Signup() {
             <input 
               placeholder='Phone Number'
               type="tel" 
-              value={phoneNumber} 
-              onChange={(e) => setPhoneNumber(e.target.value)} 
+              value={phone} 
+              onChange={(e) => setPhone(e.target.value)} 
               required 
               className='text-black bg-white border-2 border-gray-300 rounded-lg p-2 mt-3 w-full' 
               maxLength={15}
@@ -97,9 +130,9 @@ function Signup() {
               className='text-black bg-white border-2 border-gray-300 rounded-lg p-2 mt-3 w-full'
             >
               <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
             </select>
           </div>
 
@@ -136,7 +169,7 @@ function Signup() {
           </div>
 
           <button 
-             className='rounded-lg bg-blue-50 btn text-white p-2 mt-4 w-full'
+             className='rounded-lg cursor-pointer bg-blue-50 btn text-white p-2 mt-4 w-full'
              type="submit">
                 Sign Up
           </button>

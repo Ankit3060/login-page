@@ -1,38 +1,72 @@
-import { set } from 'mongoose';
 import React, { useState } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { Navigate, useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+import { useContext } from 'react';
+import {toast} from 'react-toastify';
 
 function Login() {
+  const {isAuthenticated,setIsAuthenticated,setUser} = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const navigateTo = useNavigate();
+
+  const validatePassword = (e) => {
 
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasNumber = /\d/.test(password);
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+      
+    return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+  };
 
-    if (!(hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar)) {
+
+  const handleLogin = async(e)=>{
+    e.preventDefault();
+
+
+    if (!validatePassword(password)) {
       setPasswordError(<>Password must contain at least one uppercase,<br></br> lowercase, number, and special character.</>);
       return;
     }else{
       setPasswordError('');
     }
 
+    try {
+      const response =await axios.post(
+        "http://localhost:4000/api/v1/user/login",
+        {email,password},
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    console.log('Email:', email);
-    console.log('Password:', password);
-    alert(`Your email is ${email} and your password is ${password}`);
-  };
+      toast.success(response.data.message);
+      setUser(response.data.user);
+      setIsAuthenticated(true);
+      navigateTo('/');
+    } catch (error) {
+      toast.error(error.response.data.message || "login failed");
+    }
+  }
+
+
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[rgb(214, 228, 239)">
       <div className='bg-white rounded-2xl shadow-xl p-16 m-8 max-w-2xl mx-auto'>
         <h2 className='text-3xl text-black'>Welcome to AuXiVault!</h2>
         <p className='text-black'>Please Log-in to your account</p>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
 
           <div>
             <input 
@@ -81,7 +115,7 @@ function Login() {
           </div>
 
           <button 
-             className='rounded-lg bg-blue-50 btn text-white p-2 mt-4 w-full'
+             className='rounded-lg cursor-pointer bg-blue-50 btn text-white p-2 mt-4 w-full'
              type="submit">
                 Log In
           </button>
