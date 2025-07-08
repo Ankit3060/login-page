@@ -15,8 +15,12 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.get("http://localhost:4000/api/v1/user/logout", {
+      await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/user/logout`, {
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": import.meta.env.VITE_API_KEY,
+        },
       });
 
       setUser(null);

@@ -7,7 +7,7 @@ import {toast} from 'react-toastify';
 
 function Login() {
   const {isAuthenticated,setIsAuthenticated,setUser} = useContext(AuthContext);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
@@ -37,12 +37,13 @@ function Login() {
 
     try {
       const response =await axios.post(
-        "http://localhost:4000/api/v1/user/login",
+        `${import.meta.env.VITE_API_URL}/api/v1/user/login`,
         {email,password},
         {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
+            "x-api-key": import.meta.env.VITE_API_KEY,
           },
         }
       );
@@ -52,6 +53,7 @@ function Login() {
       setIsAuthenticated(true);
       navigateTo('/');
     } catch (error) {
+      console.error("Login error:", error); 
       toast.error(error.response.data.message || "login failed");
     }
   }

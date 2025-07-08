@@ -36,11 +36,11 @@ const Dashboard = () => {
   const fetchUserData = async () => {
     try {
       setLoading(true);
-      
-      const res = await axios.get("http://localhost:4000/api/v1/user/me", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/user/me`, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
+          "x-api-key": import.meta.env.VITE_API_KEY,
         },
       });
 
@@ -62,12 +62,13 @@ const Dashboard = () => {
   const handleSave = async () => {
     try {
       const res = await axios.put(
-        "http://localhost:4000/api/v1/user/update",
+        `${import.meta.env.VITE_API_URL}/api/v1/user/update`,
         editedUser,
         {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
+            "x-api-key": import.meta.env.VITE_API_KEY,
           },
         }
       );
@@ -112,12 +113,13 @@ const Dashboard = () => {
       setPasswordError("");
       
       const res = await axios.put(
-        "http://localhost:4000/api/v1/user/update-password",
+        `${import.meta.env.VITE_API_URL}/api/v1/user/update-password`,
         { newPassword, confirmPassword },
         {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
+            "x-api-key": import.meta.env.VITE_API_KEY,
           },
         }
       );

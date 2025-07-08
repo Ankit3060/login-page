@@ -9,9 +9,12 @@ function Home() {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/api/v1/user/me",
+          `${import.meta.env.VITE_API_URL}/api/v1/user/me`,
           {
             withCredentials: true,
+            headers: {
+              "x-api-key": import.meta.env.VITE_API_KEY,
+            },
           }
         );
         setIsAuthenticated(true);

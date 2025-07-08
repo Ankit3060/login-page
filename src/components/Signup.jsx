@@ -38,12 +38,13 @@ function Signup() {
 
     try {
       const res = await axios.post(
-        "http://localhost:4000/api/v1/user/register",
+        `${import.meta.env.VITE_API_URL}/api/v1/user/register`,
         {firstName, lastName, email, phone, gender, password},
         {
           withCredentials: true,
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json", 
+            "x-api-key": import.meta.env.VITE_API_KEY,
           },
         }
       );
