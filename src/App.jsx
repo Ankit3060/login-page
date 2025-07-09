@@ -7,6 +7,7 @@ import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import { ToastContainer } from 'react-toastify';
+import AllUserDashboard from "./components/AllUserDashboard";
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/all' element={<AllUserDashboard />} />
         </Routes>
         <ToastContainer position='top-center'/>
       </Router>

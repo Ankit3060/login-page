@@ -63,6 +63,10 @@ const Navbar = () => {
           Dashboard
         </Link>
 
+        <Link to="/all" className="text-lg font-bold ml-[] ">
+          All Data
+        </Link>
+
         {user ? (
           <div className="relative">
             
