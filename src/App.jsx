@@ -8,6 +8,7 @@ import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import { ToastContainer } from 'react-toastify';
 import AllUserDashboard from "./components/AllUserDashboard";
+import UserView from './components/UserView';
 
 function App() {
 
@@ -21,6 +22,8 @@ function App() {
           <Route path='/signup' element={<Signup />} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/all' element={<AllUserDashboard />} />
+          <Route path="/user/:id" element={<UserView />} />
+
         </Routes>
         <ToastContainer position='top-center'/>
       </Router>
