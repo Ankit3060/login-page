@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaUserEdit } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { HiUserAdd } from "react-icons/hi";
 
 const UserDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -106,7 +107,8 @@ const UserDashboard = () => {
 
     const handleEdit = ()=>{
       console.log("Editing user:", params.data.id);
-      
+      navigate(`/user/${params.data.id}/edit`);
+      toast.warning(`Editing ${params.data.fullName}`);
     }
 
     return (
@@ -157,6 +159,12 @@ const UserDashboard = () => {
   return (
     <>
     <div  style={{ height: 600, width: '100%', padding: '20px' }}>
+      <button 
+        className='cursor-pointer float-right text-3xl hover:text-blue-500'
+        onClick={() => navigate("/add")}>
+        <HiUserAdd />
+
+      </button>
       <AgGridReact
               rowData={users}
               columnDefs={columns}

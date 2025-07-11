@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FaUserLarge } from "react-icons/fa6";
 
 const Navbar = () => {
   const { user, setUser, setIsAuthenticated, isAuthenticated } = useContext(AuthContext);
@@ -72,9 +73,9 @@ const Navbar = () => {
             
             <button
               onClick={toggleDropdown}
-              className="w-10 h-10 roundzed-full bg-gray-300 flex items-center justify-center hover:bg-gray-400 focus:outline-none"
+              className="w-10 h-10 roundzed-full bg-gray-300 cursor-pointer flex items-center justify-center hover:bg-gray-400 focus:outline-none"
             >
-              <span className="text-xl cursor-pointer">👤</span>
+              <span className="text-xl "><FaUserLarge /></span>
             </button>
             <div className="text-sm font-bold">
               <span className="text-gray-800">{user.firstName} {user.lastName}</span>

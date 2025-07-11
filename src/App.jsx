@@ -1,14 +1,16 @@
 import React, { useState, useContext } from 'react';
 import './App.css';
-import Login from './components/Login';
-import Home from './components/Home';
-import Navbar from "./components/Navbar";
+import Login from './Pages/Login';
+import Home from './Pages/Home';
+import Navbar from "./Components/Navbar";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
-import Signup from './components/Signup';
-import Dashboard from './components/Dashboard';
+import Signup from './Pages/Signup';
+import Dashboard from './Pages/Dashboard';
 import { ToastContainer } from 'react-toastify';
-import AllUserDashboard from "./components/AllUserDashboard";
-import UserView from './components/UserView';
+import AllUserDashboard from "./Pages/AllUserDashboard";
+import UserView from './Pages/UserView';
+import EditUser from './Pages/EditUser';
+import AddUser from './Pages/AddUser';
 
 function App() {
 
@@ -23,7 +25,8 @@ function App() {
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/all' element={<AllUserDashboard />} />
           <Route path="/user/:id" element={<UserView />} />
-
+          <Route path='/user/:id/edit' element={<EditUser />} />
+          <Route path='/add' element={<AddUser />} />
         </Routes>
         <ToastContainer position='top-center'/>
       </Router>

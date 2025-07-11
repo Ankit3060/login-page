@@ -1,14 +1,17 @@
 import React, { useEffect, useState, useContext} from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import { IoMdArrowBack } from "react-icons/io";
+import { Navigate } from "react-router-dom";
 
 const UserView = () => {
   const { id } = useParams();
   const [user, setUsers] = useState(null);
   const [loading, setLoading] = useState(true);
   const { setIsAuthenticated, setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
       const fetchUser = async () => {
@@ -78,7 +81,13 @@ const UserView = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[rgb(214, 228, 239)] flex items-center justify-center p-4">
+    <>
+    <div className="flex justify-start text-gray-800 p-4 text-4xl mt-2 ml-30">
+      <button className="bg-white p-2 cursor-pointer rounded-full shadow-md hover:bg-gray-100 transition-colors" onClick={() => navigate("/all")}>
+        <IoMdArrowBack />
+      </button>
+    </div>
+    <div className="min-h-screen bg-[rgb(214, 228, 239)] flex items-center justify-center p-4 mt-[-65px]">
       <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8 space-y-6">
         <h2 className="text-3xl font-bold text-blue-700 text-center">User Details</h2>
 
@@ -101,6 +110,7 @@ const UserView = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

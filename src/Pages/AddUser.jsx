@@ -1,0 +1,211 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { AuthContext } from '../context/AuthContext';
+import axios from 'axios';
+import { useContext } from 'react';
+import { IoMdArrowBack } from "react-icons/io";
+
+function AddUser() {
+  const { setIsAuthenticated, setUser } = useContext(AuthContext);
+    const navigateTo = useNavigate();
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [gender, setGender] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  const validatePassword = (password) => {
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+  };
+
+
+  useEffect(() => {
+        const fetchUser = async () => {
+          try {
+            const response = await axios.get(
+              `${import.meta.env.VITE_API_URL}/api/v1/user/me`,
+              {
+                withCredentials: true,
+                headers: {
+                  "x-api-key": import.meta.env.VITE_API_KEY,
+                },
+              }
+            );
+            setIsAuthenticated(true);
+            setUser(response.data.user);
+          } catch (error) {
+            setIsAuthenticated(false);
+            setUser(null);
+          }
+        };
+        
+        fetchUser();
+      }, []);
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    if (!validatePassword(password)) {
+      setPasswordError(<>Password must contain at least one uppercase,<br></br> lowercase, number, and special character.</>);
+      return;
+    } else {
+      setPasswordError('');
+    }
+
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/v1/user/create`,
+        {firstName, lastName, email, phone, gender, password},
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json", 
+            "x-api-key": import.meta.env.VITE_API_KEY,
+          },
+        }
+      );
+      toast.success("User added successfully!");
+      navigateTo('/all');
+      setFirstName('');
+      setLastName('');
+      setEmail('');
+      setPhone('');
+      setGender('');
+      setPassword('');
+
+    } catch (error) {
+      toast.error(error.response.data.message || "Signup failed");
+    }
+  }
+
+
+  return (
+    <>
+    <div className="flex justify-start text-gray-800 p-4 text-4xl mt-2 ml-30">
+        <button className="bg-white p-2 cursor-pointer rounded-full shadow-md hover:bg-gray-100 transition-colors" onClick={() => navigateTo("/all")}>
+            <IoMdArrowBack />
+        </button>
+    </div>
+    <div className="flex items-center justify-center min-h-screen bg-[rgb(214, 228, 239) mt-[-80px]">
+      <div className='bg-white rounded-2xl shadow-xl p-16 m-8 max-w-2xl mx-auto'>
+        <h2 className='text-3xl font-bold text-blue-700'>Add New User</h2>
+        <form onSubmit={handleSignup}>
+
+          <div className='flex gap-4'>
+            <div className='flex-1'>
+              <input 
+                placeholder='First Name'
+                type="text" 
+                value={firstName} 
+                onChange={(e) => setFirstName(e.target.value)} 
+                required 
+                className='text-black bg-white border-2 border-gray-300 rounded-lg p-2 mt-3 w-full' 
+                maxLength={30}
+              />
+            </div>
+            <div className='flex-1'>
+              <input 
+                placeholder='Last Name'
+                type="text" 
+                value={lastName} 
+                onChange={(e) => setLastName(e.target.value)} 
+                required 
+                className='text-black bg-white border-2 border-gray-300 rounded-lg p-2 mt-3 w-full' 
+                maxLength={30}
+              />
+            </div>
+          </div>
+
+          <div>
+            <input 
+              placeholder='Email'
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              required 
+              className='text-black bg-white border-2 border-gray-300 rounded-lg p-2 mt-3 w-full' 
+              maxLength={50}
+            />
+          </div>
+
+          <div>
+            <input 
+              placeholder='Phone Number'
+              type="tel" 
+              value={phone} 
+              onChange={(e) => setPhone(e.target.value)} 
+              required 
+              className='text-black bg-white border-2 border-gray-300 rounded-lg p-2 mt-3 w-full' 
+              maxLength={15}
+            />
+          </div>
+
+          <div>
+            <select 
+              value={gender} 
+              onChange={(e) => setGender(e.target.value)} 
+              required 
+              className='text-black bg-white border-2 border-gray-300 rounded-lg p-2 mt-3 w-full'
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <input 
+              placeholder='Password'
+              type="password" 
+              value={password} 
+              onChange={(e) => { 
+                const value = e.target.value;
+                setPassword(value);
+
+                if(value.length==0){setPasswordError(''); return;}
+                
+                const hasUpperCase = /[A-Z]/.test(password);
+                const hasLowerCase = /[a-z]/.test(password);
+                const hasNumber = /\d/.test(password);
+                const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+                if (!(hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar)) {
+                setPasswordError(<>Password must contain at least one uppercase,<br></br> lowercase, number, and special character.</>);
+                return;
+                } else {
+                setPasswordError('');
+                }
+              }} 
+              required 
+              className={`text-black bg-white border-2 rounded-lg p-2 mt-3 w-full 
+                            ${passwordError ? 'border-red-300':'border-gray-300'}`} 
+              minLength={8}
+              maxLength={20}
+            />
+            {passwordError ? <p className={`text-sm text-red-500`}>{passwordError}</p> : null}         
+          </div>
+
+          <button 
+             className='rounded-lg cursor-pointer bg-blue-50 btn text-white p-2 mt-4 w-full'
+             type="submit">
+                Add
+          </button>
+          
+        </form>
+      </div>
+    </div>
+    </>
+  );
+}
+
+export default AddUser;
