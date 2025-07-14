@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
@@ -11,11 +11,14 @@ import { FaUserEdit } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { HiUserAdd } from "react-icons/hi";
+import {api_key,api_url} from '../context/links.js';
 
 const UserDashboard = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const {setIsAuthenticated, setUser } = useContext(AuthContext);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+
   const navigate = useNavigate();
     
     useEffect(() => {
@@ -67,7 +70,7 @@ const UserDashboard = () => {
         createdAt : user.createdAt ? user.createdAt.split('T')[0] : '',
       }));
       setUsers(formattedData);
-        console.log('User fetched succeessfully!');
+      setFilteredUsers(formattedData);
     } catch (err) {
       console.error('Error fetching users:', err);
     } finally {
@@ -92,10 +95,10 @@ const UserDashboard = () => {
       const userId = params.data.id;
 
       try {
-        await axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/user/delete/${userId}`, {
+        await axios.delete(`${api_url}/api/v1/user/delete/${userId}`, {
           withCredentials: true,
           headers: {
-            'x-api-key': import.meta.env.VITE_API_KEY,
+            'x-api-key': api_key,
           },
         });
         toast.success("User deleted successfully!");
@@ -118,7 +121,6 @@ const UserDashboard = () => {
           onClick={handleView}
         >
           <FaRegEye />
-
         </button>
 
         <button 
@@ -126,7 +128,6 @@ const UserDashboard = () => {
           onClick={handleEdit}
         >
           <FaUserEdit />
-
         </button>
 
         <button 
@@ -134,7 +135,6 @@ const UserDashboard = () => {
           onClick={handleDelete}
         >
           <MdDelete />
-
         </button>
 
       </div>
@@ -156,17 +156,42 @@ const UserDashboard = () => {
   const paginationPageSize = 10;
   const paginationPageSizeSelector = [10, 20, 50];
 
+  const gridRef = useRef();
+
+  // const onFilterTextBoxChanged = ()=>{
+  //   gridRef.current.api.setGridOption("quickFilterText",
+  //     document.getElementById("filter-text-box").value);
+  // }
+  
+  const onFilterTextBoxChanged = (e)=>{
+    const value = e.target.value.toLowerCase();
+    const filtered = users.filter((user)=>user.fullName.toLowerCase().includes(value));
+    setFilteredUsers(filtered);
+  }
+
   return (
     <>
-    <div  style={{ height: 600, width: '100%', padding: '20px' }}>
+    <div className='flex justify-between items-center p-4'>
+      <input 
+        type="search" 
+        id='filter-text-box'
+        placeholder='Search users...' 
+        className='border p-2 rounded-2xl text-black bg-white border-gray-300' 
+        onChange={onFilterTextBoxChanged}
+
+        />
+
       <button 
-        className='cursor-pointer float-right text-3xl hover:text-blue-500'
+        className='cursor-pointer float-right text-3xl hover:text-blue-500 mr-[70px]'
         onClick={() => navigate("/add")}>
         <HiUserAdd />
-
       </button>
+    </div>
+
+    <div  style={{ height: 600, width: '100%', padding: '20px' }}>
       <AgGridReact
-              rowData={users}
+              ref={gridRef}
+              rowData={filteredUsers}
               columnDefs={columns}
               loading={loading}
               pagination={pagination}

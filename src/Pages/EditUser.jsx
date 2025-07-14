@@ -176,6 +176,7 @@ const InlineField = ({ label, value, onChange, type = "text", disabled = false }
       ) : (
         <input
           type={type}
+          max={new Date().toISOString().split('T')[0]}
           value={value}
           onChange={(e) => onChange && onChange(e.target.value)}
           disabled={disabled}

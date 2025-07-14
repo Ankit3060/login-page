@@ -355,6 +355,7 @@ const InlineField = ({ label, value, editable = false, onChange, type = "text" }
         ) : (
           <input
             type={type}
+            max={new Date().toISOString().split('T')[0]}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className="flex-1 px-3 py-1 border-2 border-gray-300 rounded-lg"
