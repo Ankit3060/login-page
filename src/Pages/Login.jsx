@@ -43,12 +43,12 @@ function Login() {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
-            "x-api-key": import.meta.env.VITE_API_KEY,
           },
         }
       );
 
       toast.success(response.data.message);
+      localStorage.setItem("token", response.data.token);
       setUser(response.data.user);
       setIsAuthenticated(true);
       navigateTo('/');

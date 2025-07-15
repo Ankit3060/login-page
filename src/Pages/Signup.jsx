@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useContext } from 'react';
 
 function Signup() {
-  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, setIsAuthenticated, setUser } = useContext(AuthContext);
   const navigateTo = useNavigate();
 
   const [firstName, setFirstName] = useState('');
@@ -43,13 +43,18 @@ function Signup() {
         {
           withCredentials: true,
           headers: {
-            "Content-Type": "application/json", 
-            "x-api-key": import.meta.env.VITE_API_KEY,
+            "Content-Type": "application/json",
           },
         }
       );
-      toast.success(res.data.message);
+    
+      if(res.data.token){
+        localStorage.setItem("token", res.data.token);
+      }
+
+      setUser(res.data.user);
       setIsAuthenticated(true);
+      toast.success(res.data.message);
       navigateTo('/');
       setFirstName('');
       setLastName('');

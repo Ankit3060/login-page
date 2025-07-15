@@ -18,18 +18,26 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const {setIsAuthenticated, setUser } = useContext(AuthContext);
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [input, setInput] = useState('')
 
   const navigate = useNavigate();
     
     useEffect(() => {
       const fetchUser = async () => {
         try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            toast.error("You are not authenticated, Please log in.");
+            return;
+          }
+          
           const response = await axios.get(
             `${import.meta.env.VITE_API_URL}/api/v1/user/me`,
             {
               withCredentials: true,
               headers: {
-                "x-api-key": import.meta.env.VITE_API_KEY,
+                // "x-api-key": import.meta.env.VITE_API_KEY,
+                Authorization: `Bearer ${token}`,
               },
             }
           );
@@ -47,12 +55,19 @@ const UserDashboard = () => {
 
   const fetchUsers = async () => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("You are not authenticated, Please log in.");
+        return;
+      }
+
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/user/all`,
         {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': import.meta.env.VITE_API_KEY,
+            // 'x-api-key': import.meta.env.VITE_API_KEY,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -70,7 +85,7 @@ const UserDashboard = () => {
         createdAt : user.createdAt ? user.createdAt.split('T')[0] : '',
       }));
       setUsers(formattedData);
-      setFilteredUsers(formattedData);
+      // setFilteredUsers(formattedData); 
     } catch (err) {
       console.error('Error fetching users:', err);
     } finally {
@@ -95,10 +110,17 @@ const UserDashboard = () => {
       const userId = params.data.id;
 
       try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          toast.error("You are not authenticated, Please log in.");
+          return;
+        }
+
         await axios.delete(`${api_url}/api/v1/user/delete/${userId}`, {
           withCredentials: true,
           headers: {
-            'x-api-key': api_key,
+            // 'x-api-key': api_key,
+            Authorization: `Bearer ${token}`,
           },
         });
         toast.success("User deleted successfully!");
@@ -153,7 +175,7 @@ const UserDashboard = () => {
   ];
 
   const pagination = true;
-  const paginationPageSize = 10;
+  const paginationPageSize = 20;
   const paginationPageSizeSelector = [10, 20, 50];
 
   const gridRef = useRef();
@@ -165,9 +187,13 @@ const UserDashboard = () => {
   
   const onFilterTextBoxChanged = (e)=>{
     const value = e.target.value.toLowerCase();
-    const filtered = users.filter((user)=>user.fullName.toLowerCase().includes(value));
-    setFilteredUsers(filtered);
+    setInput(value);
+    
+    // const filtered = users.filter((user)=>user.fullName.toLowerCase().includes(value));
+    // setFilteredUser(filtered);
   }
+
+  const filtereddata=users?.filter((user)=>user.fullName.toLowerCase().includes(input));
 
   return (
     <>
@@ -176,6 +202,7 @@ const UserDashboard = () => {
         type="search" 
         id='filter-text-box'
         placeholder='Search users...' 
+        value={input}
         className='border p-2 rounded-2xl text-black bg-white border-gray-300' 
         onChange={onFilterTextBoxChanged}
 
@@ -191,7 +218,7 @@ const UserDashboard = () => {
     <div  style={{ height: 600, width: '100%', padding: '20px' }}>
       <AgGridReact
               ref={gridRef}
-              rowData={filteredUsers}
+              rowData={filtereddata}
               columnDefs={columns}
               loading={loading}
               pagination={pagination}

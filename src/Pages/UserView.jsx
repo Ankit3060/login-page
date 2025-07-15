@@ -16,12 +16,20 @@ const UserView = () => {
   useEffect(() => {
       const fetchUser = async () => {
         try {
+
+          const token = localStorage.getItem("token");
+          if (!token) {
+            toast.error("You are not authenticated, Please log in.");
+            return;
+          }
+
           const response = await axios.get(
             `${import.meta.env.VITE_API_URL}/api/v1/user/me`,
             {
               withCredentials: true,
               headers: {
-                "x-api-key": import.meta.env.VITE_API_KEY,
+                // "x-api-key": import.meta.env.VITE_API_KEY,
+                Authorization: `Bearer ${token}`,
               },
             }
           );
@@ -43,10 +51,18 @@ const UserView = () => {
   const fetchUserData = async () => {
     try {
       setLoading(true);
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("You are not authenticated, Please log in.");
+        return;
+      }
+
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/user/${id}`, {
         withCredentials: true,
         headers: {
-          "x-api-key": import.meta.env.VITE_API_KEY,
+          // "x-api-key": import.meta.env.VITE_API_KEY,
+          Authorization: `Bearer ${token}`,
         },
       });
 

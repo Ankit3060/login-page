@@ -16,11 +16,17 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("You are not authenticated, Please log in.");
+        return;
+      }
       await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/user/logout`, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
-          "x-api-key": import.meta.env.VITE_API_KEY,
+          // "x-api-key": import.meta.env.VITE_API_KEY,
+          Authorization: `Bearer ${token}`,
         },
       });
 

@@ -13,6 +13,12 @@ const UserDetailForm = () => {
   const [loading, setLoading] = useState(true);
   const { setIsAuthenticated, setUser } = useContext(AuthContext);
 
+  const token = localStorage.getItem("token");
+  if (!token) {
+    toast.error("You are not authenticated, Please log in.");
+    return;
+  }
+
   useEffect(() => {
       const fetchUser = async () => {
         try {
@@ -21,7 +27,8 @@ const UserDetailForm = () => {
             {
               withCredentials: true,
               headers: {
-                "x-api-key": import.meta.env.VITE_API_KEY,
+                // "x-api-key": import.meta.env.VITE_API_KEY,
+                Authorization: `Bearer ${token}`,
               },
             }
           );
@@ -44,7 +51,8 @@ const UserDetailForm = () => {
           const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/user/${id}`, {
             withCredentials: true,
             headers: {
-              "x-api-key": import.meta.env.VITE_API_KEY,
+              // "x-api-key": import.meta.env.VITE_API_KEY,
+              Authorization: `Bearer ${token}`,
             },
           });
           setFormData(res.data.user);
@@ -70,8 +78,9 @@ const UserDetailForm = () => {
       await axios.put(`${import.meta.env.VITE_API_URL}/api/v1/user/update/${id}`, formData, {
         withCredentials: true,
         headers: {
-          "x-api-key": import.meta.env.VITE_API_KEY,
+          // "x-api-key": import.meta.env.VITE_API_KEY,
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
       toast.success("User updated successfully!");

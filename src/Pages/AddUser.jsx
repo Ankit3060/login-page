@@ -14,6 +14,7 @@ function AddUser() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [dob, setDob] = useState();
   const [gender, setGender] = useState('');
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -27,6 +28,11 @@ function AddUser() {
     return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
   };
 
+  const token = localStorage.getItem("token");
+  if (!token) {
+    toast.error("You are not authenticated, Please log in.");
+    return;
+  }
 
   useEffect(() => {
         const fetchUser = async () => {
@@ -36,7 +42,8 @@ function AddUser() {
               {
                 withCredentials: true,
                 headers: {
-                  "x-api-key": import.meta.env.VITE_API_KEY,
+                  // "x-api-key": import.meta.env.VITE_API_KEY,
+                  Authorization: `Bearer ${token}`,
                 },
               }
             );
@@ -69,7 +76,8 @@ function AddUser() {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json", 
-            "x-api-key": import.meta.env.VITE_API_KEY,
+            // "x-api-key": import.meta.env.VITE_API_KEY,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -146,6 +154,20 @@ function AddUser() {
               required 
               className='text-black bg-white border-2 border-gray-300 rounded-lg p-2 mt-3 w-full' 
               maxLength={15}
+            />
+          </div>
+
+          <div className="flex items-center gap-2 mt-3">
+            <label htmlFor="dob" className="whitespace-nowrap">DOB:</label>
+            <input
+              id="dob"
+              type="date"
+              placeholder="DOB"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              required
+              className="text-black bg-white border-2 border-gray-300 rounded-lg p-2 w-full"
+              max={new Date().toISOString().split('T')[0]}
             />
           </div>
 
