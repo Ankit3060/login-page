@@ -14,6 +14,7 @@ import { HiUserAdd } from "react-icons/hi";
 import {api_key,api_url} from '../context/links.js';
 
 const UserDashboard = () => {
+  document.title = "All User";
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const {setIsAuthenticated, setUser } = useContext(AuthContext);
